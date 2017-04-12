@@ -1,0 +1,93 @@
+version: "2.0"
+
+services:
+  applications:
+      container_name: applications
+      image: hub.c.163.com/workhardsmile/citestplus:data_volumn
+      volumes:
+        - ../data/nginx:/var/www        
+  mysql:
+      container_name: mysql
+      build:
+        context: ./mysql
+        dockerfile: Dockerfile
+      environment:
+        MYSQL_ROOT_PASSWORD: 111111     
+      ports:
+        - "3307:3306"
+      volumes:
+        - ../data/mysql:/data/mysql
+  mongo:
+      container_name: mongo
+      build:
+        context: ./mongo
+        dockerfile: Dockerfile
+      ports:
+        - "27018:27017"
+      volumes:
+        - ../data/mongo:/data/db
+  redis:
+      container_name: redis
+      build:
+        context: ./redis
+        dockerfile: Dockerfile
+      ports:
+        - "6380:6379"
+      volumes:
+        - ../data/redis:/data
+  jenkins:
+      build:
+        context: ./jenkins
+        dockerfile: Dockerfile
+      container_name: jenkins
+      hostname: jenkins
+      ports:
+       - "8080:8080"
+      volumes:
+        - ../data/jenkins:/var/jenkins_home
+      environment:
+        - JAVA_VM_PARAMETERS=-Xmx1024m -Xms512m
+        - JENKINS_PARAMETERS=
+        - JENKINS_MASTER_EXECUTORS=0
+        - JENKINS_SLAVEPORT=50000
+        - JENKINS_PLUGINS=
+        - JENKINS_ADMIN_USER=admin
+        - JENKINS_ADMIN_PASSWORD=test
+        - JENKINS_KEYSTORE_PASSWORD=
+        - JENKINS_LOG_FILE=
+        - JENKINS_USER_NAMES=slave
+        - JENKINS_USER_PERMISSIONS=jenkins.model.Jenkins.READ:hudson.model.Computer.CONNECT:hudson.model.Computer.DISCONNECT:hudson.model.Computer.CREATE
+        - JENKINS_USER_PASSWORDS=slave
+  passenger-nginx:
+      container_name: passenger-nginx
+      build:
+        context: ./passenger-nginx
+        dockerfile: Dockerfile
+      volumes_from:
+        - applications
+      ports:
+        - "80:80"
+        - "443:443"
+        - "8001:8001"
+        - "8002:8002"
+        - "8003:8003"
+        #- "8004:8004"
+        #- "8005:8005"
+      links:
+        - "php-fpm"
+        - "mysql"
+        - "redis"        
+        #- "mongo"
+  php-fpm:
+      container_name: php-fpm
+      build:
+        context: ./php-fpm
+        dockerfile: Dockerfile
+      volumes_from:
+        - applications
+      volumes:
+        - ../data/php-fpm/log:/data/php-fpm/log
+      links:
+        - "mysql"
+        - "redis"
+        #- "mongo"   
