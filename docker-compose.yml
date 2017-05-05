@@ -3,14 +3,12 @@ version: "2.0"
 services:
   applications:
       container_name: applications
-      image: hub.c.163.com/workhardsmile/citestplus:data_volumn
+      image: dockercitest_data:latest
       volumes:
         - ../data/nginx/www:/var/www
   mysql:
       container_name: mysql
-      build:
-        context: ./mysql
-        dockerfile: Dockerfile
+      image: dockercitest_mysql:latest
       environment:
         MYSQL_ROOT_PASSWORD: 111111     
       ports:
@@ -19,26 +17,20 @@ services:
         - ../data/mysql:/data/mysql
   mongo:
       container_name: mongo
-      build:
-        context: ./mongo
-        dockerfile: Dockerfile
+      image: dockercitest_mongo:latest
       ports:
         - "27018:27017"
       volumes:
         - ../data/mongo:/data/db
   redis:
       container_name: redis
-      build:
-        context: ./redis
-        dockerfile: Dockerfile
+      image: dockercitest_redis:latest
       ports:
         - "6380:6379"
       volumes:
         - ../data/redis:/data
   jenkins:
-      build:
-        context: ./jenkins
-        dockerfile: Dockerfile
+      image: dockercitest_jenkins:latest
       container_name: jenkins
       hostname: jenkins
       ports:
@@ -60,9 +52,7 @@ services:
         - JENKINS_USER_PASSWORDS=slave
   passenger-nginx:
       container_name: passenger-nginx
-      build:
-        context: ./passenger-nginx/supervisor
-        dockerfile: Dockerfile
+      image: dockercitest_passenger-nginx:latest
       volumes_from:
         - applications
       volumes:
@@ -83,9 +73,7 @@ services:
         #- "mongo"
   php-fpm:
       container_name: php-fpm
-      build:
-        context: ./php-fpm
-        dockerfile: Dockerfile
+      image: dockercitest_php-fpm:latest
       volumes_from:
         - applications
       volumes:
