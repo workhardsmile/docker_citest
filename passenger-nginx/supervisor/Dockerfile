@@ -12,8 +12,8 @@ RUN echo "0 1 * * * root /bin/sh /var/nginx/conf/crontab.sh >> /dev/null 2>&1">/
     pip install supervisor
 
 COPY ./nginx.conf /etc/nginx/nginx.conf
-COPY ./nginx-sites.conf /var/nginx/conf/nginx-sites.conf
 COPY ./supervisor.conf /var/nginx/conf/supervisor.conf
+COPY ./nginx-sites.conf /var/nginx/conf/nginx-sites.conf
 COPY ./crontab.sh /var/nginx/conf/crontab.sh
 VOLUME ["/var/nginx/conf","/var/nginx/log", "/var/www"]
 
