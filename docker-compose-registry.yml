@@ -30,11 +30,13 @@ services:
       volumes:
         - ../data/redis:/data
   jenkins:
-      image: hub.c.163.com/workhardsmile/citestplus:jenkins
+      #image: hub.c.163.com/workhardsmile/citestplus:jenkins
+      image: hub.c.163.com/library/jenkins:2.46.2
       container_name: jenkins
       hostname: jenkins
       ports:
-       - "8080:8080"
+        - "8080:8080"
+        - "5000:5000"
       volumes:
         - ../data/jenkins:/var/jenkins_home
       environment:
