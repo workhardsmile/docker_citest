@@ -4,10 +4,12 @@ FROM hub.c.163.com/workhardsmile/citestplus:passenger-nginx
 MAINTAINER  Frank Wu "gang.wu@istuary.com"
 
 COPY ./startup.sh /startup.sh
-RUN echo "0 1 * * * root /bin/sh /var/nginx/conf/crontab.sh >> /dev/null 2>&1">/etc/crontab &&\
+RUN echo "0 1 * * * root /bin/bash /var/nginx/conf/crontab.sh >> /dev/null 2>&1">/etc/crontab &&\
     chmod +x /startup.sh &&\
     mkdir -p /var/nginx/conf &&\
     mkdir -p /var/nginx/log &&\
+    apt-get update -y &&\
+    apt-get install -y mysql-client &&\
     apt-get -y install python-pip &&\
     pip install supervisor
 
