@@ -3,34 +3,18 @@ version: "2.0"
 services:
   applications:
       container_name: applications
-      image: hub.c.163.com/workhardsmile/citestplus:data_volumn
+      image: hub.c.163.com/workhardsmile/citest:data_volumn
       volumes:
         - ../data/nginx/www:/var/www
-  mysql:
-      container_name: mysql
-      image: hub.c.163.com/workhardsmile/citestplus:mysql
-      environment:
-        MYSQL_ROOT_PASSWORD: 111111     
-      ports:
-        - "3307:3306"
-      volumes:
-        - ../data/mysql:/data/mysql
   mongo:
       container_name: mongo
-      image: hub.c.163.com/workhardsmile/citestplus:mongo
+      image: hub.c.163.com/workhardsmile/citest:mongo
       ports:
         - "27018:27017"
       volumes:
         - ../data/mongo:/data/db
-  redis:
-      container_name: redis
-      image: hub.c.163.com/workhardsmile/citestplus:redis
-      ports:
-        - "6380:6379"
-      volumes:
-        - ../data/redis:/data
   jenkins:
-      #image: hub.c.163.com/workhardsmile/citestplus:jenkins
+      #image: hub.c.163.com/workhardsmile/citest:jenkins
       image: hub.c.163.com/library/jenkins:2.46.2
       container_name: jenkins
       hostname: jenkins
@@ -52,9 +36,27 @@ services:
         - JENKINS_USER_NAMES=slave
         - JENKINS_USER_PERMISSIONS=jenkins.model.Jenkins.READ:hudson.model.Computer.CONNECT:hudson.model.Computer.DISCONNECT:hudson.model.Computer.CREATE
         - JENKINS_USER_PASSWORDS=slave
+  mysql:
+      container_name: mysql
+      image: hub.c.163.com/workhardsmile/citest:mysql
+      restart: always
+      environment:
+        MYSQL_ROOT_PASSWORD: 12345678
+      ports:
+        - "3306:3306"
+      volumes:
+        - ../data/mysql:/data/mysql
+  redis:
+      container_name: redis
+      image: hub.c.163.com/workhardsmile/citest:redis
+      restart: always
+      ports:
+        - "6380:6379"
+      volumes:
+        - ../data/redis:/data
   passenger-nginx:
       container_name: passenger-nginx
-      image: hub.c.163.com/workhardsmile/citestplus:passenger-nginx-queues
+      image: hub.c.163.com/workhardsmile/citest:passenger-nginx
       volumes_from:
         - applications
       volumes:
@@ -67,15 +69,14 @@ services:
         - "8002:8002"
         - "8003:8003"
         - "8004:8004"
-        - "8005:8005"
+        - "8000:8000"
       links:
-        - "php-fpm"
         - "mysql"
-        - "redis"        
-        #- "mongo"
+        - "redis"
+        - "php-fpm"
   php-fpm:
       container_name: php-fpm
-      image: hub.c.163.com/workhardsmile/citestplus:php-fpm
+      image: hub.c.163.com/workhardsmile/citest:php-fpm
       volumes_from:
         - applications
       volumes:
@@ -83,4 +84,4 @@ services:
       links:
         - "mysql"
         - "redis"
-        #- "mongo"   
+        #- "mongo"
